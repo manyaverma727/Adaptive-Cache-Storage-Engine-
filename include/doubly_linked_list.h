@@ -9,6 +9,10 @@ private:
     CacheNode<Key, Value>* tail = nullptr;
 
 public:
+    bool isEmpty() const {
+        return head == nullptr;
+    }
+
     void insertAtFront(CacheNode<Key, Value>* node) {
         if (node == nullptr) {
             return;

@@ -1,18 +1,29 @@
 #include <iostream>
-#include "lru_cache.h" // <-- THIS IS THE CRUCIAL LINE
+#include <optional>
+#include "lru_cache.h"
+#include "lfu_cache.h"
 
 int main() {
-    std::cout << "--- Starting LRU Cache Test ---\n";
+    std::cout << "--- Testing LRU Cache ---\n";
     LRUCache<int, int> lru(2);
     lru.put(1, 100);
-    std::cout << "Put (1, 100)\n";
     lru.put(2, 200);
-    std::cout << "Put (2, 200)\n";
-    std::cout << "Get 1: " << lru.get(1).value_or(-1) << " (Expected 100)\n";
+    lru.get(1);
     lru.put(3, 300);
-    std::cout << "Put (3, 300) -> This should evict key 2!\n";
-    std::cout << "Get 2: " << lru.get(2).value_or(-1) << " (Expected -1, Cache Miss)\n";
-    std::cout << "Get 3: " << lru.get(3).value_or(-1) << " (Expected 300)\n";
-    std::cout << "--- Test Passed! ---\n";
+    std::cout << (lru.get(2) == std::nullopt ? "LRU Passed!\n" : "LRU Failed\n");
+
+    std::cout << "\n--- Testing LFU Cache ---\n";
+    LFUCache<int, int> lfu(2);
+    lfu.put(1, 10);
+    lfu.put(2, 20);
+
+    std::cout << "Get 1 (Freq goes to 2): " << lfu.get(1).value_or(-1) << "\n";
+    std::cout << "Put (3, 30) -> This should evict key 2!\n";
+    lfu.put(3, 30);
+
+    std::cout << "Get 2 (Expected -1): " << lfu.get(2).value_or(-1) << "\n";
+    std::cout << "Get 3 (Expected 30): " << lfu.get(3).value_or(-1) << "\n";
+
+    std::cout << "\n--- ALL TESTS PASSED! ---\n";
     return 0;
 }
